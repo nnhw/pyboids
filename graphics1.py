@@ -29,14 +29,14 @@ for i in range(size):
                                fill="black", tag="obs")
 root.update()
 
-boid_1 = boid.boid(size/2, size/2)
+boid_1 = boid.boid(int(size/2), int(size/2))
 
 boid_1.input_obstacles_info(obstacles_map)
 
 
 while True:
-    x, y, d = boid_1.get_visual_info()
-    # print(x, y, d)
+    x, y, d_x, d_y = boid_1.get_visual_info()
+    print(x, y, d_x, d_y)
 
     if obstacles_map[int(x)][int(y)] == 1:
         del boid_1

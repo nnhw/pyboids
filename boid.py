@@ -8,7 +8,8 @@ class boid:
     _status = 0
     _speed_max = 1
     _speed_current = 1
-    _direction = mt.pi
+    _direction_x = 1
+    _direction_y = 1
     _obstacles_map_local = numpy.zeros((600, 600), dtype=int)
 
     _nearest_boid_1_distance = 0
@@ -20,9 +21,9 @@ class boid:
 
     def _move(self):
         self.coordinate_x = self.coordinate_x + \
-            (self._speed_current * mt.cos(self._direction))
+            (self._speed_current * self._direction_x)
         self.coordinate_y = self.coordinate_y + \
-            (self._speed_current * mt.sin(self._direction))
+            (self._speed_current * self._direction_y)
 
         if self.coordinate_x > 600:
             self.coordinate_x = 0
@@ -51,27 +52,33 @@ class boid:
         # if sight_y < 0:
         #     sight_y = 0
         for i in range(10):
-            sight_x = self.coordinate_x + (mt.cos(self._direction) * i)
-            sight_y = self.coordinate_y + (mt.sin(self._direction) * i)
-            if self._obstacles_map_local[int(sight_x)][int(sight_y)] == 1:
-                if i == 1:
-                    self._speed_current = 0
-                else:
-                    self._speed_current = self._speed_max
-                return True
-            # self._speed_current = self._speed_max - (11-i)
-            # self._direction = self._direction + 1
-            # NotImplemented
+            sight_x = self.coordinate_x + self._direction_x * i
+            sight_y = self.coordinate_y + self._direction_y * i
+            print(sight_x, sight_y)
+            if self._obstacles_map_local[sight_x][sight_y] == 1:
+                return True, i, sight_x, sight_y
+        self._speed_current = self._speed_max
+        return False, 0, 0, 0
 
-    def _choose_direction(self, obstacle):
-        self._direction = 0.9 * self._direction + \
-            random.choice((1, -1))*0.1*(random.random() * 2 * mt.pi)
+        # self._speed_current = self._speed_max - (11-i)
+        # self._direction = self._direction + 1
+        # NotImplemented
+
+    def _choose_direction(self, obstacle, distance, x, y):
+        # self._direction = 0.9 * self._direction + \
+        #     random.choice((1, -1))*0.1*(random.random() * 2 * mt.pi)
         if obstacle is True:
-            self._direction = self._direction + 1
+            # if distance < 3:
+            #     self._speed_current = 0
+            self._direction_x = random.randint(-1, 1)
+            self._direction_y = random.randint(-1, 1)
+        else:
+            self._speed_current = self._speed_max
 
     def update_status(self):
-        self._choose_direction(self._execute_vision())
+        obstacle, distance, x, y = self._execute_vision()
+        self._choose_direction(obstacle, distance, x, y)
         self._move()
 
     def get_visual_info(self):
-        return self.coordinate_x, self.coordinate_y, self._direction
+        return self.coordinate_x, self.coordinate_y, self._direction_x, self._direction_y
