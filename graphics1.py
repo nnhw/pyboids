@@ -8,7 +8,7 @@ import random
 
 def draw_actor(_canvas, _boid):
     x, y, d_x, d_y = _boid.get_visual_info()
-    print(x, y, d_x, d_y)
+    # print(x, y, d_x, d_y)
     _canvas.create_rectangle(x-1, y-1, x, y, width=5,
                              fill="red", tag="actors")
 
@@ -37,9 +37,6 @@ for i in range(obstacle_number):
     obstacle_y = random.randint(start + frame_offset+1, size - frame_offset)
     obstacles_map[obstacle_x][obstacle_y] = 1
 
-# for i in range(start + frame_offset+50, size - 100 - (frame_offset - 2)):
-#     obstacles_map[start + frame_offset+200][i] = 1
-
 root = tki.Tk()
 canvas = tki.Canvas(root, width=size, height=size, background="white")
 canvas.pack()
@@ -56,9 +53,15 @@ for i in range(size):
                                     fill="green", tag="obs")
 root.update()
 
-boid_1 = boid.boid(int(size/2), int(size/2))
-boid_2 = boid.boid(int(size/2), int(size/2))
-boid_3 = boid.boid(int(size/2), int(size/2))
+spawn_point1 = (random.randint(start + frame_offset+1, size -
+                               frame_offset), random.randint(start + frame_offset+1, size - frame_offset))
+spawn_point2 = (random.randint(start + frame_offset+1, size -
+                               frame_offset), random.randint(start + frame_offset+1, size - frame_offset))
+spawn_point3 = (random.randint(start + frame_offset+1, size -
+                               frame_offset), random.randint(start + frame_offset+1, size - frame_offset))
+boid_1 = boid.boid(spawn_point1[0], spawn_point1[1])
+boid_2 = boid.boid(spawn_point1[0]+50, spawn_point1[1]+50)
+boid_3 = boid.boid(spawn_point1[0]-50, spawn_point1[1]-50)
 
 boid_1.input_obstacles_info(obstacles_map)
 boid_2.input_obstacles_info(obstacles_map)
@@ -67,9 +70,7 @@ boid_3.input_obstacles_info(obstacles_map)
 global_point_of_interest = (random.randint(start + frame_offset+1, size -
                                            frame_offset), random.randint(start + frame_offset+1, size - frame_offset))
 
-boid_1.set_point_of_interest(global_point_of_interest)
-boid_2.set_point_of_interest(global_point_of_interest)
-boid_3.set_point_of_interest(global_point_of_interest)
+boid.boid._point_of_interest = global_point_of_interest
 
 
 while True:
@@ -89,5 +90,9 @@ while True:
     boid_1.update_status()
     boid_2.update_status()
     boid_3.update_status()
+
+    boid_1.input_buddy_info(boid_2, boid_3)
+    boid_2.input_buddy_info(boid_1, boid_3)
+    boid_3.input_buddy_info(boid_1, boid_2)
 
 # root.mainloop()
