@@ -8,12 +8,14 @@ class boid:
     _status = 0
     _speed_max = 1
     _speed_current = 1
-    _direction_x = 1
-    _direction_y = 1
-    _obstacles_map_local = numpy.zeros((600, 600), dtype=int)
+    _direction_x = 0
+    _direction_y = 0
+    _obstacles_map_local = numpy.zeros((600+1, 600+1), dtype=int)
 
     _nearest_boid_1_distance = 0
     _nearest_boid_1_angle = 0
+
+    _point_of_interest = [599, 1]
 
     def __init__(self, x, y):
         self.coordinate_x = x
@@ -54,22 +56,39 @@ class boid:
         self._speed_current = self._speed_max
         return False, 0, 0, 0
 
-    def _choose_direction(self, obstacle, distance, x, y):
-        if self._direction_x == 0 and self._direction_y == 0:
-            print("I don't wanna go, choosing another directrion and stopping")
-            self._direction_x = random.randint(-1, 1)
-            self._direction_y = random.randint(-1, 1)
-            self._speed_current = 0
-            return
-        if obstacle is True:
-            self._direction_x = random.randint(-1, 1)
-            self._direction_y = random.randint(-1, 1)
-        else:
-            self._speed_current = self._speed_max
+    def _avoid_obstacles(self, obstacle, distance, x, y):
+        # if self._direction_x == 0 and self._direction_y == 0:
+        #     print("I don't wanna go, choosing another direction and stopping")
+        #     self._direction_x = random.randint(-1, 1)
+        #     self._direction_y = random.randint(-1, 1)
+        #     self._speed_current = 0
+        #     return
+        self._direction_x = random.randint(-1, 1)
+        self._direction_y = random.randint(-1, 1)
+
+    def _set_direction_to_point(self):
+        location_error_x = self.coordinate_x - self._point_of_interest[0]
+        location_error_y = self.coordinate_y - self._point_of_interest[1]
+        if location_error_x > 0:
+            self._direction_x = -1
+        if location_error_x < 0:
+            self._direction_x = 1
+        if location_error_x == 0:
+            self._direction_x = 0
+        if location_error_y > 0:
+            self._direction_y = -1
+        if location_error_y < 0:
+            self._direction_y = 1
+        if location_error_y == 0:
+            self._direction_y = 0
 
     def update_status(self):
-        obstacle, distance, x, y = self._execute_vision()
-        self._choose_direction(obstacle, distance, x, y)
+        obstacle = True
+        self._set_direction_to_point()
+        while obstacle is True:
+            obstacle, distance, x, y = self._execute_vision()
+            if obstacle is True:
+                self._avoid_obstacles(obstacle, distance, x, y)
         self._move()
 
     def get_visual_info(self):
