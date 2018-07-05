@@ -42,34 +42,26 @@ class boid:
         self._obstacles_map_local = obstacles_info
 
     def _execute_vision(self):
-
-        # if sight_x > 599:
-        #     sight_x = 599
-        # if sight_y > 599:
-        #     sight_y = 599
-        # if sight_x < 0:
-        #     sight_x = 0
-        # if sight_y < 0:
-        #     sight_y = 0
         for i in range(10):
             sight_x = self.coordinate_x + self._direction_x * i
             sight_y = self.coordinate_y + self._direction_y * i
-            print(sight_x, sight_y)
             if self._obstacles_map_local[sight_x][sight_y] == 1:
+                print("I see an obstacle at", sight_x,
+                      sight_y, "distance is", i, ",stopping")
+                self._speed_current = 0
                 return True, i, sight_x, sight_y
+        print("It's clear, let's go!")
         self._speed_current = self._speed_max
         return False, 0, 0, 0
 
-        # self._speed_current = self._speed_max - (11-i)
-        # self._direction = self._direction + 1
-        # NotImplemented
-
     def _choose_direction(self, obstacle, distance, x, y):
-        # self._direction = 0.9 * self._direction + \
-        #     random.choice((1, -1))*0.1*(random.random() * 2 * mt.pi)
+        if self._direction_x == 0 and self._direction_y == 0:
+            print("I don't wanna go, choosing another directrion and stopping")
+            self._direction_x = random.randint(-1, 1)
+            self._direction_y = random.randint(-1, 1)
+            self._speed_current = 0
+            return
         if obstacle is True:
-            # if distance < 3:
-            #     self._speed_current = 0
             self._direction_x = random.randint(-1, 1)
             self._direction_y = random.randint(-1, 1)
         else:

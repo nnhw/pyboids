@@ -15,8 +15,23 @@ for i in range(100, 500):
     obstacles_map[500][i] = 1
     obstacles_map[i][500] = 1
     obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
-
-# obstacles_map[300][300] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
+    obstacles_map[random.randint(100, 500)][random.randint(100, 500)] = 1
 
 root = tki.Tk()
 canvas = tki.Canvas(root, width=size, height=size, background="white")
