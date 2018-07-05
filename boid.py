@@ -7,7 +7,10 @@ class boid:
     # _size = 5
     # _status = 0
     _speed_max = 1
+    # local visibility map
     _obstacles_map_local = numpy.zeros((600+1, 600+1), dtype=int)
+    # TODO: replace global map on small local one (10 x 10)
+    # mastermind attribute
     _point_of_interest = [0, 0]
 
     def __init__(self, x, y):
@@ -21,17 +24,11 @@ class boid:
         self._buddy_1_direction = [0, 0]
         self._buddy_2_direction = [0, 0]
 
-    # def set_point_of_interest(self, point_of_interest):
-    #     self._point_of_interest = point_of_interest
+    def get_visual_info(self):
+        return self._coordinate[0], self._coordinate[1], self._direction[0], self._direction[1]
 
-    def _move(self):
-        self._coordinate[0] = self._coordinate[0] + \
-            (self._speed_current * self._direction[0])
-        self._coordinate[1] = self._coordinate[1] + \
-            (self._speed_current * self._direction[1])
-
-    def _update_nearest_boids_info(self):
-        NotImplemented
+    def set_point_of_interest(self, point_of_interest):
+        self._point_of_interest = point_of_interest
 
     def input_obstacles_info(self, obstacles_info):
         self._obstacles_map_local = obstacles_info
@@ -41,6 +38,12 @@ class boid:
         self._buddy_2_coordinate = _buddy_2._coordinate
         self._buddy_1_direction = _buddy_1._direction
         self._buddy_2_direction = _buddy_2._direction
+
+    def _move(self):
+        self._coordinate[0] = self._coordinate[0] + \
+            (self._speed_current * self._direction[0])
+        self._coordinate[1] = self._coordinate[1] + \
+            (self._speed_current * self._direction[1])
 
     def _execute_vision(self):
         for i in range(10):
@@ -125,6 +128,3 @@ class boid:
             if obstacle is True:
                 self._avoid_obstacles(obstacle, distance, x, y)
         self._move()
-
-    def get_visual_info(self):
-        return self._coordinate[0], self._coordinate[1], self._direction[0], self._direction[1]
