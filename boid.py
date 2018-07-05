@@ -10,32 +10,28 @@ class boid:
     _speed_current = 1
     _direction_x = 0
     _direction_y = 0
+    _coordinate_x = 0
+    _coordinate_y = 0
     _obstacles_map_local = numpy.zeros((600+1, 600+1), dtype=int)
 
     _nearest_boid_1_distance = 0
     _nearest_boid_1_angle = 0
 
-    _point_of_interest = [599, 1]
+    _point_of_interest = [0, 0]
 
     def __init__(self, x, y):
         self.coordinate_x = x
         self.coordinate_y = y
+        self._point_of_interest = [x, y]
+
+    def set_point_of_interest(self, point_of_interest):
+        self._point_of_interest = point_of_interest
 
     def _move(self):
         self.coordinate_x = self.coordinate_x + \
             (self._speed_current * self._direction_x)
         self.coordinate_y = self.coordinate_y + \
             (self._speed_current * self._direction_y)
-
-        if self.coordinate_x > 600:
-            self.coordinate_x = 0
-        if self.coordinate_y > 600:
-            self.coordinate_y = 0
-
-        if self.coordinate_x < 0:
-            self.coordinate_x = 600
-        if self.coordinate_y < 0:
-            self.coordinate_y = 600
 
     def _update_nearest_boids_info(self):
         NotImplemented
@@ -57,12 +53,6 @@ class boid:
         return False, 0, 0, 0
 
     def _avoid_obstacles(self, obstacle, distance, x, y):
-        # if self._direction_x == 0 and self._direction_y == 0:
-        #     print("I don't wanna go, choosing another direction and stopping")
-        #     self._direction_x = random.randint(-1, 1)
-        #     self._direction_y = random.randint(-1, 1)
-        #     self._speed_current = 0
-        #     return
         self._direction_x = random.randint(-1, 1)
         self._direction_y = random.randint(-1, 1)
 

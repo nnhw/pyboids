@@ -6,13 +6,25 @@ import numpy
 import random
 
 
+def draw_actor(_canvas, _boid):
+    x, y, d_x, d_y = _boid.get_visual_info()
+    print(x, y, d_x, d_y)
+    _canvas.create_rectangle(x-1, y-1, x, y, width=5,
+                             fill="red", tag="actors")
+
+
+def handle_collision(_obstacles_map, _boid):
+    x, y, d_x, d_y = _boid.get_visual_info()
+    if _obstacles_map[int(x)][int(y)] == 1:
+        print("MAYDAY!")
+        del _boid
+
+
 size = 600
 start = 1
 
 frame_offset = 10
-
 obstacle_number = 10000
-
 obstacles_map = numpy.zeros((size+1, size+1), dtype=int)
 
 for i in range(start + frame_offset, size - (frame_offset - 2)):
@@ -45,28 +57,37 @@ for i in range(size):
 root.update()
 
 boid_1 = boid.boid(int(size/2), int(size/2))
+boid_2 = boid.boid(int(size/2), int(size/2))
+boid_3 = boid.boid(int(size/2), int(size/2))
 
 boid_1.input_obstacles_info(obstacles_map)
+boid_2.input_obstacles_info(obstacles_map)
+boid_3.input_obstacles_info(obstacles_map)
+
+global_point_of_interest = (random.randint(start + frame_offset+1, size -
+                                           frame_offset), random.randint(start + frame_offset+1, size - frame_offset))
+
+boid_1.set_point_of_interest(global_point_of_interest)
+boid_2.set_point_of_interest(global_point_of_interest)
+boid_3.set_point_of_interest(global_point_of_interest)
 
 
 while True:
-    x, y, d_x, d_y = boid_1.get_visual_info()
-    print(x, y, d_x, d_y)
 
-    if obstacles_map[int(x)][int(y)] == 1:
-        print("MAYDAY!")
-        del boid_1
+    draw_actor(canvas, boid_1)
+    handle_collision(obstacles_map, boid_1)
 
-    canvas.create_rectangle(x-1, y-1, x, y, width=5,
-                            fill="red", tag="id1")
+    draw_actor(canvas, boid_2)
+    handle_collision(obstacles_map, boid_2)
+
+    draw_actor(canvas, boid_3)
+    handle_collision(obstacles_map, boid_3)
 
     root.update()
     tm.sleep(0.04)
-    canvas.delete("id1")
+    canvas.delete("actors")
     boid_1.update_status()
-    # canvas.getint("id1")
-
+    boid_2.update_status()
+    boid_3.update_status()
 
 # root.mainloop()
-
-# tk._test()
