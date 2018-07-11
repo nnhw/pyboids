@@ -8,14 +8,15 @@ class boid:
     # _status = 0
     _speed_max = 1
     # local visibility map
+    # FIXME: Magic numbers!
     _obstacles_map_local = numpy.zeros((600+1, 600+1), dtype=int)
     # TODO: replace global map on small local one (10 x 10)
     # mastermind attribute
     _point_of_interest = [0, 0]
 
-    def __init__(self, x, y):
-        self._coordinate = [x, y]
-        self._point_of_interest = [x, y]
+    def __init__(self, coordinate):
+        self._coordinate = [coordinate[0], coordinate[1]]
+        self._point_of_interest = coordinate
         self._speed_current = 1
         self._direction = [0, 0]
 
@@ -25,7 +26,7 @@ class boid:
         self._buddy_2_direction = [0, 0]
 
     def get_visual_info(self):
-        return self._coordinate[0], self._coordinate[1], self._direction[0], self._direction[1]
+        return self._coordinate, self._direction
 
     def set_point_of_interest(self, point_of_interest):
         self._point_of_interest = point_of_interest
@@ -89,13 +90,13 @@ class boid:
             return False
 
     def _centralize(self):
-        cental_point_x = int(
+        central_point_x = int(
             (self._coordinate[0]+self._buddy_1_coordinate[0]+self._buddy_2_coordinate[0])/3)
-        cental_point_y = int(
+        central_point_y = int(
             (self._coordinate[1]+self._buddy_1_coordinate[1]+self._buddy_2_coordinate[1])/3)
-        cental_point = [cental_point_x, cental_point_y]
-        self._set_direction_to_point(cental_point, 10)
-        # print("Central point is", cental_point)
+        central_point = [central_point_x, central_point_y]
+        self._set_direction_to_point(central_point, 10)
+        # print("Central point is", central_point)
 
     def _choose_random_direction(self):
         self._direction = [random.randint(-1, 1), random.randint(-1, 1)]
@@ -121,8 +122,8 @@ class boid:
         obstacle = True
         # self._set_direction_to_point(boid._point_of_interest, 0)
         self._choose_random_direction()
-        self._synchronize_directions()
-        self._centralize()
+        # self._synchronize_directions()
+        # self._centralize()
         while obstacle is True:
             obstacle, distance, x, y = self._execute_vision()
             if obstacle is True:

@@ -1,33 +1,38 @@
 import tkinter as tki
 import time as tm
 import math as mt
-import boid
+# import boid
 import numpy
 import random
+import swarm
 
 
-def draw_actor(_canvas, _boid):
-    x, y, d_x, d_y = _boid.get_visual_info()
-    # print(x, y, d_x, d_y)
-    _canvas.create_rectangle(x-1, y-1, x, y, width=5,
-                             fill="red", tag="actors")
+def draw_actors(_canvas, _actors_map):
+    for i in range(size):
+        for j in range(size):
+            if _actors_map[i][j] == 1:
+                # print(x, y, d_x, d_y)
+                _canvas.create_rectangle(i-1, j-1, i, j, width=5,
+                                         fill="red", tag="actors")
 
 
-def handle_collision(_obstacles_map, _boid):
-    x, y, d_x, d_y = _boid.get_visual_info()
-    if _obstacles_map[int(x)][int(y)] == 1:
-        print("MAYDAY!")
-        del _boid  # Oh, how rude
+# def handle_collision(_obstacles_map, _boid):
+#     x, y, d_x, d_y = _boid.get_visual_info()
+#     if _obstacles_map[int(x)][int(y)] == 1:
+#         print("MAYDAY!")
+#         del _boid  # Oh, how rude
 
 
 size = 600  # canvas size
 start = 1  # don't modify! synchronization purposes
 
 obstacle_frame_offset = 10
+
+
 obstacle_number = 10000
 # size+1 is for synchronization with the canvas
 obstacles_map = numpy.zeros((size+1, size+1), dtype=int)
-# frame contstruction
+# frame construction
 for i in range(start + obstacle_frame_offset, size - (obstacle_frame_offset - 2)):
     obstacles_map[start + obstacle_frame_offset][i] = 1
     obstacles_map[i][start + obstacle_frame_offset] = 1
@@ -60,48 +65,16 @@ for i in range(size):
                                     fill="green", tag="obs")
 root.update()
 
-# agent creation
-spawn_point1 = (random.randint(start + obstacle_frame_offset+1, size -
-                               obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
-spawn_point2 = (random.randint(start + obstacle_frame_offset+1, size -
-                               obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
-spawn_point3 = (random.randint(start + obstacle_frame_offset+1, size -
-                               obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
-boid_1 = boid.boid(spawn_point1[0], spawn_point1[1])
-boid_2 = boid.boid(spawn_point2[0], spawn_point2[1])
-boid_3 = boid.boid(spawn_point3[0], spawn_point3[1])
-
-boid_1.input_obstacles_info(obstacles_map)
-boid_2.input_obstacles_info(obstacles_map)
-boid_3.input_obstacles_info(obstacles_map)
-
-global_point_of_interest = (random.randint(start + obstacle_frame_offset+1, size -
-                                           obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
-
-boid.boid._point_of_interest = global_point_of_interest
-
+swarm = swarm.swarm(30, obstacles_map)
 
 while True:
 
-    draw_actor(canvas, boid_1)
-    handle_collision(obstacles_map, boid_1)
-    draw_actor(canvas, boid_2)
-    handle_collision(obstacles_map, boid_2)
-    draw_actor(canvas, boid_3)
-    handle_collision(obstacles_map, boid_3)
+    draw_actors(canvas, swarm.get_swarm_map())
 
     # drawing
     root.update()
-    tm.sleep(0.04)
+    tm.sleep(0.04)  # 25 fps
     canvas.delete("actors")
 
-    boid_1.update_status()
-    boid_2.update_status()
-    boid_3.update_status()
-
-    # information exchange
-    boid_1.input_buddy_info(boid_2, boid_3)
-    boid_2.input_buddy_info(boid_1, boid_3)
-    boid_3.input_buddy_info(boid_1, boid_2)
-
+    swarm.update_status()
 # root.mainloop()
