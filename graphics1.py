@@ -35,7 +35,7 @@ start = 1  # don't modify! synchronization purposes
 obstacle_frame_offset = 10
 
 
-obstacle_number = 0
+obstacle_number = 1000
 # size+1 is for synchronization with the canvas
 obstacles_map = numpy.zeros((size+1, size+1), dtype=int)
 # frame construction
@@ -71,7 +71,7 @@ for i in range(size):
                                     fill="green", tag="obs")
 root.update()
 
-swarm_1 = swarm.swarm(30, obstacles_map)
+swarm_1 = swarm.swarm(50, obstacles_map)
 
 while True:
 
@@ -80,7 +80,7 @@ while True:
 
     # drawing
     root.update()
-    tm.sleep(0.04)  # 25 fps
+    tm.sleep(0.01)  # 25 fps
     canvas.delete("actors")
 
     swarm_1.update_status()
