@@ -120,8 +120,8 @@ class boid:
 
     def update_status(self):
         obstacle = True
-        # self._set_direction_to_point(boid._point_of_interest, 0)
-        self._choose_random_direction()
+        self._set_direction_to_point(boid._point_of_interest, 0)
+        # self._choose_random_direction()
         # self._synchronize_directions()
         # self._centralize()
         while obstacle is True:
