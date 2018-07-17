@@ -13,6 +13,12 @@ def draw_actors(_canvas):
         _canvas.create_rectangle(coord[0]-1, coord[1]-1, coord[0], coord[1], width=5,
                                  fill="red", tag="actors")
 
+
+def draw_point_of_interest(_canvas):
+    canvas.delete("poi")
+    coord = swarm_1.get_global_point_of_interest()
+    _canvas.create_oval(coord[0]-3, coord[1]-3, coord[0]+3, coord[1]+3, width=1,
+                        fill="red", tag="poi")
 # def handle_collision(_obstacles_map, _boid):
 #     x, y, d_x, d_y = _boid.get_visual_info()
 #     if _obstacles_map[int(x)][int(y)] == 1:
@@ -43,9 +49,17 @@ for i in range(obstacle_number):
         start + obstacle_frame_offset+1, size - obstacle_frame_offset)
     obstacles_map[obstacle_x][obstacle_y] = 1
 
+
+def callback(event):
+    # print("clicked at", event.x, event.y)
+    swarm_1.set_global_point_of_interest([event.x, event.y])
+    draw_point_of_interest(canvas)
+
+
 # graphics init
 root = tki.Tk()
 canvas = tki.Canvas(root, width=size, height=size, background="white")
+canvas.bind("<Button-1>", callback)
 canvas.pack()
 
 # eye candy
@@ -64,6 +78,7 @@ root.update()
 
 swarm_1 = swarm.swarm(50, obstacles_map)
 
+draw_point_of_interest(canvas)
 while True:
 
     # draw_actors(canvas, swarm.get_swarm_map())
@@ -71,7 +86,7 @@ while True:
 
     # drawing
     root.update()
-    tm.sleep(0.01)  # 25 fps
+    # tm.sleep(0.01)  # 25 fps
     canvas.delete("actors")
 
     swarm_1.update_status()

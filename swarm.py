@@ -24,15 +24,20 @@ class swarm:
 
     # agent creation
     def _create_boids(self, obstacles_map):
+        def random_point(): return (random.randint(start + obstacle_frame_offset+1, size -
+                                                   obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
         for i in range(self._number_of_boids):
-            spawn_point = (random.randint(start + obstacle_frame_offset+1, size -
-                                          obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
+            spawn_point = random_point()
             while (obstacles_map[spawn_point[0]][spawn_point[1]]) == 1:
-                spawn_point = (random.randint(start + obstacle_frame_offset+1, size -
-                                              obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
-            # TODO: add checks for respawn collision with obstacles map
+                spawn_point = random_point()
             self.boid.append(boid.boid(spawn_point, self))
             self.boid[i].input_obstacles_info(obstacles_map)
+
+    def set_global_point_of_interest(self, point_of_interest):
+        boid.boid._point_of_interest = point_of_interest
+
+    def get_global_point_of_interest(self):
+        return boid.boid._point_of_interest
 
     def update_status(self):
         for boid in self.boid:  # self._number_of_boids:

@@ -45,7 +45,7 @@ class boid:
             (self._speed_current * self._direction[1])
 
     def _execute_vision(self):
-        for i in range(10):
+        for i in range(1, 11):
             sight_x = self._coordinate[0] + self._direction[0] * i
             sight_y = self._coordinate[1] + self._direction[1] * i
             if self._obstacles_map_local[sight_x][sight_y] == 1:
@@ -56,6 +56,7 @@ class boid:
             if self._check_buddy_position([sight_x, sight_y]) is True:
                 # print("I see a buddy at", sight_x,
                 #       sight_y, "distance is", i, ",stopping")
+                self._speed_current = 0
                 return True, i, sight_x, sight_y
         # print("It's clear, let's go!")
         self._speed_current = self._speed_max
@@ -156,8 +157,8 @@ class boid:
     def update_status(self):
         self._find_nearest_boids()
         obstacle = True
-        # self._set_direction_to_point(boid._point_of_interest, 0)
-        self._choose_random_direction()
+        self._set_direction_to_point(boid._point_of_interest, 0)
+        # self._choose_random_direction()
         self._synchronize_directions()
         self._centralize()
         while obstacle is True:
