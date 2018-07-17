@@ -13,15 +13,6 @@ def draw_actors(_canvas):
         _canvas.create_rectangle(coord[0]-1, coord[1]-1, coord[0], coord[1], width=5,
                                  fill="red", tag="actors")
 
-# def draw_actors(_canvas, _actors_map):
-    # for i in range(size):
-    #     for j in range(size):
-    #         if _actors_map[i][j] == 1:
-    #             # print(x, y, d_x, d_y)
-    #             _canvas.create_rectangle(i-1, j-1, i, j, width=5,
-    #                                      fill="red", tag="actors")
-
-
 # def handle_collision(_obstacles_map, _boid):
 #     x, y, d_x, d_y = _boid.get_visual_info()
 #     if _obstacles_map[int(x)][int(y)] == 1:
@@ -35,7 +26,7 @@ start = 1  # don't modify! synchronization purposes
 obstacle_frame_offset = 10
 
 
-obstacle_number = 1000
+obstacle_number = 10000
 # size+1 is for synchronization with the canvas
 obstacles_map = numpy.zeros((size+1, size+1), dtype=int)
 # frame construction

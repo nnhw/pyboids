@@ -27,6 +27,9 @@ class swarm:
         for i in range(self._number_of_boids):
             spawn_point = (random.randint(start + obstacle_frame_offset+1, size -
                                           obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
+            while (obstacles_map[spawn_point[0]][spawn_point[1]]) == 1:
+                spawn_point = (random.randint(start + obstacle_frame_offset+1, size -
+                                              obstacle_frame_offset), random.randint(start + obstacle_frame_offset+1, size - obstacle_frame_offset))
             # TODO: add checks for respawn collision with obstacles map
             self.boid.append(boid.boid(spawn_point, self))
             self.boid[i].input_obstacles_info(obstacles_map)
@@ -34,9 +37,3 @@ class swarm:
     def update_status(self):
         for boid in self.boid:  # self._number_of_boids:
             boid.update_status()
-
-
-# information exchange
-    # boid_1.input_buddy_info(boid_2, boid_3)
-    # boid_2.input_buddy_info(boid_1, boid_3)
-    # boid_3.input_buddy_info(boid_1, boid_2)

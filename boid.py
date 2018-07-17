@@ -24,8 +24,10 @@ class boid:
 
         self._buddy_1_coordinate = [0, 0]
         self._buddy_2_coordinate = [0, 0]
+        self._buddy_3_coordinate = [0, 0]
         self._buddy_1_direction = [0, 0]
         self._buddy_2_direction = [0, 0]
+        self._buddy_3_direction = [0, 0]
 
     def get_visual_info(self):
         return self._coordinate, self._direction
@@ -65,9 +67,11 @@ class boid:
 
     def _synchronize_directions(self):
         direction_x = self._buddy_1_direction[0] + \
-            self._buddy_2_direction[0] + self._direction[0]
+            self._buddy_2_direction[0] + \
+            self._buddy_3_direction[0] + self._direction[0]
         direction_y = self._buddy_1_direction[1] + \
-            self._buddy_2_direction[1] + self._direction[1]
+            self._buddy_2_direction[1] + \
+            self._buddy_3_direction[1] + self._direction[1]
         if direction_x > 1:
             direction_x = 1
         if direction_x < -1:
@@ -108,21 +112,23 @@ class boid:
         )
         self._buddy_2_coordinate, self._buddy_2_direction = self._swarm.boid[difference[self._swarm._number_of_boids - 3][0]].get_visual_info(
         )
+        self._buddy_3_coordinate, self._buddy_3_direction = self._swarm.boid[difference[self._swarm._number_of_boids - 4][0]].get_visual_info(
+        )
         # print(self._buddy_1_coordinate, "\n")
         # print(self._buddy_2_coordinate, "\n")
         # print(self._swarm.boid[difference[0][0]], "\n")
 
     def _check_buddy_position(self, _coordinates):
-        if (_coordinates == self._buddy_1_coordinate) or (_coordinates == self._buddy_2_coordinate):
+        if (_coordinates == self._buddy_1_coordinate) or (_coordinates == self._buddy_2_coordinate) or (_coordinates == self._buddy_3_coordinate):
             return True
         else:
             return False
 
     def _centralize(self):
         central_point_x = int(
-            (self._coordinate[0]+self._buddy_1_coordinate[0]+self._buddy_2_coordinate[0])/3)
+            (self._buddy_1_coordinate[0]+self._buddy_2_coordinate[0]+self._buddy_3_coordinate[0])/3)
         central_point_y = int(
-            (self._coordinate[1]+self._buddy_1_coordinate[1]+self._buddy_2_coordinate[1])/3)
+            (self._buddy_1_coordinate[1]+self._buddy_2_coordinate[1]+self._buddy_3_coordinate[1])/3)
         central_point = [central_point_x, central_point_y]
         self._set_direction_to_point(central_point, 10)
         # print("Central point is", central_point)
