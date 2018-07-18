@@ -63,26 +63,9 @@ class boid:
         return False, 0, 0, 0
 
     def _avoid_obstacles(self, obstacle, distance, x, y):
+        # TODO: Implement "smart" avoidance alogithm
         self._direction[0] = random.randint(-1, 1)
         self._direction[1] = random.randint(-1, 1)
-
-    def _synchronize_directions(self):
-        direction_x = self._buddy_1_direction[0] + \
-            self._buddy_2_direction[0] + \
-            self._buddy_3_direction[0] + self._direction[0]
-        direction_y = self._buddy_1_direction[1] + \
-            self._buddy_2_direction[1] + \
-            self._buddy_3_direction[1] + self._direction[1]
-        if direction_x > 1:
-            direction_x = 1
-        if direction_x < -1:
-            direction_x = -1
-        if direction_y > 1:
-            direction_y = 1
-        if direction_y < -1:
-            direction_y = -1
-        self._direction = [direction_x, direction_y]
-        # print("New synch direction is", self._direction)
 
     def _calculate_distances_in_swarm(self):
         difference = []
@@ -125,7 +108,7 @@ class boid:
         else:
             return False
 
-    def _centralize(self):
+    def _cohesion(self):
         central_point_x = int(
             (self._buddy_1_coordinate[0]+self._buddy_2_coordinate[0]+self._buddy_3_coordinate[0])/3)
         central_point_y = int(
@@ -133,6 +116,24 @@ class boid:
         central_point = [central_point_x, central_point_y]
         self._set_direction_to_point(central_point, 10)
         # print("Central point is", central_point)
+
+    def _alignment(self):
+        direction_x = self._buddy_1_direction[0] + \
+            self._buddy_2_direction[0] + \
+            self._buddy_3_direction[0] + self._direction[0]
+        direction_y = self._buddy_1_direction[1] + \
+            self._buddy_2_direction[1] + \
+            self._buddy_3_direction[1] + self._direction[1]
+        if direction_x > 1:
+            direction_x = 1
+        if direction_x < -1:
+            direction_x = -1
+        if direction_y > 1:
+            direction_y = 1
+        if direction_y < -1:
+            direction_y = -1
+        self._direction = [direction_x, direction_y]
+        # print("New synch direction is", self._direction)
 
     def _choose_random_direction(self):
         self._direction = [random.randint(-1, 1), random.randint(-1, 1)]
@@ -159,8 +160,8 @@ class boid:
         obstacle = True
         self._set_direction_to_point(boid._point_of_interest, 0)
         # self._choose_random_direction()
-        self._synchronize_directions()
-        self._centralize()
+        self._alignment()
+        self._cohesion()
         while obstacle is True:
             obstacle, distance, x, y = self._execute_vision()
             if obstacle is True:
