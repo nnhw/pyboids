@@ -18,16 +18,21 @@ class boid:
         self._coordinate = [coordinate[0], coordinate[1]]
         self._point_of_interest = coordinate
         self._speed_current = 1
+        
         self._direction = 0
+        self._vector_to_target = 0
+        self._cohesion_vector = 0
+        self._alignment_vector = 0
+        self._avoidance_vector = 0
 
         self._swarm = swarm
 
         self._buddy_1_coordinate = [0, 0]
         self._buddy_2_coordinate = [0, 0]
         self._buddy_3_coordinate = [0, 0]
-        self._buddy_1_direction = [0, 0]
-        self._buddy_2_direction = [0, 0]
-        self._buddy_3_direction = [0, 0]
+        self._buddy_1_direction = 0
+        self._buddy_2_direction = 0
+        self._buddy_3_direction = 0
 
     def get_visual_info(self):
         return self._coordinate, self._direction
@@ -68,12 +73,8 @@ class boid:
 
     def _avoid_obstacles(self, obstacle, distance, x, y):
         # TODO: Implement "smart" avoidance algorithm
-        # self._direction = random.random() * mt.pi
-        self._direction = self._direction + 1
-        # if direction > mt.pi:
-        #     self._direction = mt.pi
-        # else:
-        #     self._direction = direction
+        self._avoidance_vector = mt.pi
+
         
 
     def _calculate_distances_in_swarm(self):
@@ -117,35 +118,46 @@ class boid:
         else:
             return False
 
-    def _choose_random_direction(self):
-        self._direction = 0.9 * self._direction + \
-            random.choice((1, -1))*0.1*(random.random() * 2 * mt.pi)
+    def _add_random_noise_to_direction(self):
+        self._direction = 0.99 * self._direction + \
+            random.choice((1, -1))*0.01*(random.random() * 2 * mt.pi)
         # print("New random direction is", self._direction)
 
     def _set_direction_to_point(self, _setpoint, _threshold):
         location_error_x = self._coordinate[0] - _setpoint[0]
         location_error_y = self._coordinate[1] - _setpoint[1]
-        print("location_error_x = ", location_error_x)
-        print("location_error_y = ", location_error_y)
+        # print("location_error_x = ", location_error_x)
+        # print("location_error_y = ", location_error_y)
         hippo = mt.sqrt(mt.pow(location_error_x, 2) + mt.pow(location_error_y, 2))
-        print("hippo = ", hippo)
+        # print("hippo = ", hippo)
         sin = -(abs(location_error_y) / hippo)
-        print("sin = ", sin)
+        # print("sin = ", sin)
         direction = mt.asin(sin)
-        print("direction = ", direction*58)
-        if (location_error_x > 0) and (location_error_y > 0):
-            self._direction = (mt.pi) - direction 
-        if (location_error_x > 0) and (location_error_y < 0):
-            self._direction = (mt.pi) + direction 
-        if (location_error_x < 0) and (location_error_y > 0):
-            self._direction = direction 
-        if (location_error_x < 0) and (location_error_y < 0):
-            self._direction = (2*mt.pi) - direction 
-        self._wrap_direction()
+        # print("direction = ", direction*58)
+        if (location_error_x > _threshold) and (location_error_y > _threshold):
+            vector_to_target = (mt.pi) - direction 
+        elif (location_error_x > _threshold) and (location_error_y < -_threshold):
+            vector_to_target = (mt.pi) + direction 
+        elif (location_error_x < -_threshold) and (location_error_y > _threshold):
+            vector_to_target = direction 
+        elif (location_error_x < -_threshold) and (location_error_y < -_threshold):
+            vector_to_target = (2*mt.pi) - direction 
+        elif (location_error_x == 0) and (location_error_y > _threshold):
+            vector_to_target = mt.pi/2 
+        elif (location_error_x == 0) and (location_error_y < -_threshold):
+            vector_to_target = 3*mt.pi/2  
+        elif (location_error_x > _threshold) and (location_error_y == 0):
+            vector_to_target = mt.pi  
+        elif (location_error_x < _threshold) and (location_error_y == 0):
+            vector_to_target = 0
+        else:
+            vector_to_target = 0
+        return vector_to_target
+
         
-        print("direction wrapped = ", self._direction*58)
-        print("cos = ", mt.cos(self._direction))
-        print("sin = ", mt.sin(self._direction))
+        # print("direction wrapped = ", self._direction*58)
+        # print("cos = ", mt.cos(self._direction))
+        # print("sin = ", mt.sin(self._direction))
 
 
     def _cohesion(self):
@@ -154,36 +166,37 @@ class boid:
         central_point_y = int(
             (self._buddy_1_coordinate[1]+self._buddy_2_coordinate[1]+self._buddy_3_coordinate[1])/3)
         central_point = [central_point_x, central_point_y]
-        self._set_direction_to_point(central_point, 10)
+        self._cohesion_vector = self._set_direction_to_point(central_point, 10)
         # print("Central point is", central_point)
 
     def _alignment(self):
-        direction_x = self._buddy_1_direction[0] + \
-            self._buddy_2_direction[0] + \
-            self._buddy_3_direction[0] + self._direction[0]
-        direction_y = self._buddy_1_direction[1] + \
-            self._buddy_2_direction[1] + \
-            self._buddy_3_direction[1] + self._direction[1]
-        if direction_x > 1:
-            direction_x = 1
-        if direction_x < -1:
-            direction_x = -1
-        if direction_y > 1:
-            direction_y = 1
-        if direction_y < -1:
-            direction_y = -1
-        self._direction = [direction_x, direction_y]
+        self._alignment_vector = self._buddy_1_direction + \
+            self._buddy_2_direction + \
+            self._buddy_3_direction
         # print("New synch direction is", self._direction)
 
     def update_status(self):
         self._find_nearest_boids()
         obstacle = True
-        self._set_direction_to_point(boid._point_of_interest, 0)
-        # self._choose_random_direction()
+        self._vector_to_target = self._set_direction_to_point(boid._point_of_interest, 0)
         # self._alignment()
-        # self._cohesion()
+        self._cohesion()        
+
         while obstacle is True:
             obstacle, distance, x, y = self._execute_vision()
             if obstacle is True:
                 self._avoid_obstacles(obstacle, distance, x, y)
+
+        # k1 = k2 = k3 = k4 = 1
+        # self._direction = (k1 * self._vector_to_target + k2 * self._alignment_vector + k3 * self._cohesion_vector + k4 * self._avoidance_vector)/2
+
+        print("self._vector_to_target = ", self._vector_to_target*58)
+        print("self._cohesion_vector = ", self._cohesion_vector*58)
+        self._direction = self._vector_to_target
+        print("direction wrapped = ", self._direction*58)
+
+        # self._add_random_noise_to_direction()
+        self._wrap_direction()
+        print("direction wrapped = ", self._direction*58)
+
         self._move()
