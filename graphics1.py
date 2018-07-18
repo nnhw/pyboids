@@ -12,6 +12,7 @@ def draw_actors(_canvas):
         coord, direct = swarm_1.boid[i].get_visual_info()
         _canvas.create_rectangle(coord[0]-1, coord[1]-1, coord[0], coord[1], width=5,
                                  fill="red", tag="actors")
+        canvas.create_line(coord[0], coord[1], coord[0]+mt.cos(direct)*10, coord[1]+mt.sin(direct)*10, fill="red", tag="actors", width=1)                                 
 
 
 def draw_point_of_interest(_canvas):
@@ -32,7 +33,7 @@ start = 1  # don't modify! synchronization purposes
 obstacle_frame_offset = 10
 
 
-obstacle_number = 10000
+obstacle_number = 0
 # size+1 is for synchronization with the canvas
 obstacles_map = numpy.zeros((size+1, size+1), dtype=int)
 # frame construction
@@ -76,7 +77,7 @@ for i in range(size):
                                     fill="green", tag="obs")
 root.update()
 
-swarm_1 = swarm.swarm(50, obstacles_map)
+swarm_1 = swarm.swarm(3, obstacles_map)
 
 draw_point_of_interest(canvas)
 while True:
@@ -86,7 +87,7 @@ while True:
 
     # drawing
     root.update()
-    # tm.sleep(0.01)  # 25 fps
+    tm.sleep(0.04)  # 25 fps
     canvas.delete("actors")
 
     swarm_1.update_status()
