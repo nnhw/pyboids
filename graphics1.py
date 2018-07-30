@@ -12,7 +12,7 @@ def draw_actors(_canvas):
         coord, direct = swarm_1.boid[i].get_visual_info()
         _canvas.create_rectangle(coord[0]-1, coord[1]-1, coord[0], coord[1], width=5,
                                  fill="red", tag="actors")
-        canvas.create_line(coord[0], coord[1], coord[0]+mt.cos(direct)*10, coord[1]+mt.sin(direct)*10, fill="red", tag="actors", width=1)                                 
+        canvas.create_line(coord[0], coord[1], coord[0]+(direct[0])*10, coord[1]+(direct[1])*10, fill="red", tag="actors", width=1)                                 
 
 
 def draw_point_of_interest(_canvas):
@@ -77,7 +77,7 @@ for i in range(size):
                                     fill="green", tag="obs")
 root.update()
 
-swarm_1 = swarm.swarm(3, obstacles_map)
+swarm_1 = swarm.swarm(10, obstacles_map)
 
 draw_point_of_interest(canvas)
 while True:
