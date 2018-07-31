@@ -161,8 +161,15 @@ class boid:
             if obstacle is True:
                 self._avoid_obstacles(obstacle, distance, x, y)
 
+        print("_vector_to_target = ", self._vector_to_target)
+        print("_cohesion_vector = ", self._cohesion_vector)
+        print("_alignment_vector = ", self._alignment_vector)
+        print("_avoidance_vector = ", self._avoidance_vector)
+
         self._direction = [(k1*self._vector_to_target[0] + k2*self._cohesion_vector[0] + 0.3 * self._alignment_vector[0] + self._avoidance_vector[0])/(1 + k1 + k2),
                            (k1*self._vector_to_target[1] + k2*self._cohesion_vector[1] + 0.3 * self._alignment_vector[1] + self._avoidance_vector[1])/(1 + k1 + k2)]
+
+        print("_avoidance_vector = ", self._avoidance_vector)
 
         self._add_random_noise_to_direction()
         self._move()
